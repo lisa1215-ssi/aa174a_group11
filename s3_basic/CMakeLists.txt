@@ -17,7 +17,7 @@ find_package(geometry_msgs REQUIRED)
 
 install(PROGRAMS
     scripts/constant_control.py
-    DESTINATION lib/$(PROJECT_NAME)
+    DESTINATION lib/${PROJECT_NAME}
     )
 
 if(BUILD_TESTING)

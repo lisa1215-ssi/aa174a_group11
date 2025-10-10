@@ -29,7 +29,7 @@ class Heartbeat(Node):
         """
         # construct heartbeat message
         msg = Twist()
-        msg.linear.x = 10.0
+        msg.linear.x = 2.0
         msg.angular.z = 0.0
 
         # publish heartbeat counter
