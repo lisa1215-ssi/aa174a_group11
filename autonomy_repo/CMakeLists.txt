@@ -10,6 +10,11 @@ find_package(ament_cmake REQUIRED)
 
 
 install(PROGRAMS
+    scripts/heading_controller.py
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
     scripts/perception_controller.py
     DESTINATION lib/${PROJECT_NAME}
 )
