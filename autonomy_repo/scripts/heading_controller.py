@@ -20,11 +20,11 @@ class HeadingController(BaseHeadingController):
         super().__init__(node_name)
 
         # Added class variable for proportional control
-        self.declare_parameter("kp", 2.0)
-
+        self.declare_parameter("active", True)
+        self.prev_time = 0
 
     @property
-    def kp(self) -> float:
+    def active(self) -> bool:
         """ Get real-time parameter value of maximum velocity
 
         Returns:
@@ -32,7 +32,7 @@ class HeadingController(BaseHeadingController):
         """
 
         # Retrieve the relevant controller parameter
-        return self.get_parameter("kp").value
+        return self.get_parameter("active").value
 
 
     def compute_control_with_goal(
@@ -49,8 +49,7 @@ class HeadingController(BaseHeadingController):
         Returns:
             TurtleBotControl: control command
         """
-        err = wrap_angle(goal.theta - state.theta)
-        omega = self.kp * err
+        omega = 0.5
 
         command = TurtleBotControl()
         # TODO: Compute the control command based on the current and goal states
@@ -62,7 +61,24 @@ class HeadingController(BaseHeadingController):
 
         # Apply proportional control law
         command.v = 0.0
-        command.omega = omega
+
+        if(self.active):
+            command.omega = omega
+        else:
+            if(self.prev_time != 0):
+                print('')
+                self.prev_time = self.get_clock().now().nanoseconds/1e9
+
+            cur_time = self.get_clock().now().nanoseconds / 1e9
+            if(cur_time > self.prev_time + 5):
+                print('Waiting for 5 seconds')
+                command.omega = 0.5
+                self.set_parameters([rclpy.Parameter("active", value = True)])
+                self.prev_time = 0
+            else:
+                raise Exception("Bob")
+                print('5 seconds has passed')
+                command.omega = 0
 
         return command
 
