@@ -76,7 +76,7 @@ class Frontier_Explorer(Node):
         cond2 = occupied == 0
         cond3 = unoccupied >= 0.3
 
-        frontier_mask = cond1 and cond2 and cond3  # TODO use np.where to make frontier mask based on the 3 conditions of Exploration Heuristics
+        frontier_mask = cond1 & cond2 & cond3  # TODO use np.where to make frontier mask based on the 3 conditions of Exploration Heuristics
         frontier_states = np.transpose(np.nonzero(np.transpose(frontier_mask)))
         frontier_states = self.occupancy.grid2state(frontier_states)
 
