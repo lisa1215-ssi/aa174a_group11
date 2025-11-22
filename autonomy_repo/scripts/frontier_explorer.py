@@ -26,13 +26,13 @@ class Frontier_Explorer(Node):
         self.declare_parameter("active", True)
 
         self.state_sub = self.create_subscription(
-            Bool, "/state_callback", self.state_callback, 10
-        )  # TODO make subscriber node
+            Bool, "/state", self.state_callback, 10
+        )  # TODO make subscriber n_cb_cbode
         self.map_sub = self.create_subscription(
-            Bool, "/map_callback", self.map_callback, 10
+            Bool, "/map", self.map_callback, 10
         )  # TODO make subscriber node
         self.nav_success_sub = self.create_subscription(
-            Bool, "/nav_success_cb", self.nav_success_cb, 10
+            Bool, "/nav_success", self.nav_success_cb, 10
         )  # TODO make subscriber node
         self.cmd_nav_pub = self.create_publisher(TurtleBotState, "/cmd_nav", 10)
         self.detector_sub = self.create_subscription(
@@ -56,7 +56,7 @@ class Frontier_Explorer(Node):
             self.occupancy.probs < 0, 1, 0
         )  # TODO use np.where to find unknown mask which is indicated by the value -1
         unoccupied_mask = np.where(
-            self.occupancy.probs >= 0 & self.occupancy.probs < 0.5, 1, 0
+            (self.occupancy.probs >= 0) and (self.occupancy.probs < 0.5), 1, 0
         )  # TODO use np.where to find unknown mask which is indicated by values in range [0, 0.5)
 
         kernel = np.ones(
@@ -76,9 +76,7 @@ class Frontier_Explorer(Node):
         cond2 = occupied == 0
         cond3 = unoccupied >= 0.3
 
-        frontier_mask = (
-            cond1 & cond2 & cond3
-        )  # TODO use np.where to make frontier mask based on the 3 conditions of Exploration Heuristics
+        frontier_mask = cond1 and cond2 and cond3  # TODO use np.where to make frontier mask based on the 3 conditions of Exploration Heuristics
         frontier_states = np.transpose(np.nonzero(np.transpose(frontier_mask)))
         frontier_states = self.occupancy.grid2state(frontier_states)
 
